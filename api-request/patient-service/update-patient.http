@@ -1,0 +1,14 @@
+### PUT for update a Patient
+PUT http://localhost:4000/patients/123e4567-e89b-12d3-a456-426614174001
+Content-Type: application/json
+
+{
+  "name": "Juan",
+  "surname": "",
+  "dni": "12345678S",
+  "email": "juan_updated@email.com",
+  "phoneNumber": "+34 958262210",
+  "address": "C/ Falsita 123, Barcelona",
+  "birthDate": "1980-09-01"
+}
+###

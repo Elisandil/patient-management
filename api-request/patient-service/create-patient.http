@@ -1,0 +1,15 @@
+### POST request to create a new patient
+POST http://localhost:4000/patients
+Content-Type: application/json
+
+{
+  "name": "Pepe3",
+  "surname": "",
+  "dni": "12345678Q",
+  "email": "pepe3@email.com",
+  "phoneNumber": "+34 958262214",
+  "address": "C/ False 123, Munich",
+  "birthDate": "1992-09-01",
+  "registerDate": "2005-02-03"
+}
+###

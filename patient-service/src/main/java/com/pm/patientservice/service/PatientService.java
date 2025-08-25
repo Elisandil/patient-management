@@ -1,0 +1,67 @@
+package com.pm.patientservice.service;
+
+import com.pm.patientservice.dto.PatientRequestDTO;
+import com.pm.patientservice.dto.PatientResponseDTO;
+import com.pm.patientservice.exception.DniAlreadyExistsException;
+import com.pm.patientservice.exception.EmailAlreadyExistsException;
+import com.pm.patientservice.exception.PatientNotFoundException;
+import com.pm.patientservice.mapper.PatientMapper;
+import com.pm.patientservice.model.Patient;
+import com.pm.patientservice.repository.PatientRepository;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.UUID;
+import java.util.List;
+
+@Service
+public class PatientService {
+    private PatientRepository patientRepository;
+
+    public PatientService(PatientRepository patientRepository) {
+        this.patientRepository = patientRepository;
+    }
+
+    public List<PatientResponseDTO> getPatients() {
+        List<Patient> patients = patientRepository.findAll();
+
+        return patients.stream()
+                .map(PatientMapper::toDTO).toList();
+    }
+
+    public PatientResponseDTO createPatient(PatientRequestDTO patientRequestDTO) {
+
+        if(patientRepository.existsByDni(patientRequestDTO.getDni())) {
+            throw new DniAlreadyExistsException("A patient with this email already exists" +
+                    patientRequestDTO.getDni());
+        }
+        if(patientRepository.existsByEmail(patientRequestDTO.getEmail())) {
+            throw new EmailAlreadyExistsException("A patient with this email already exists" +
+                    patientRequestDTO.getEmail());
+        }
+        return PatientMapper.toDTO(patientRepository.save(PatientMapper.toModel(patientRequestDTO)));
+    }
+
+    public PatientResponseDTO updatePatient(UUID id, PatientRequestDTO patientRequestDTO) {
+        Patient patient = patientRepository.findById(id).orElseThrow(() ->
+                new PatientNotFoundException("Patient not found with id: " + id));
+
+        if(patientRepository.existsByDniAndEmailAndIdNot(patientRequestDTO.getDni(),
+                patientRequestDTO.getEmail(),
+                id)) {
+
+            throw new IllegalArgumentException("Dni or email already exists");
+        }
+        patient.setName(patientRequestDTO.getName());
+        patient.setSurname(patientRequestDTO.getSurname());
+        patient.setDni(patientRequestDTO.getDni());
+        patient.setEmail(patientRequestDTO.getEmail());
+        patient.setPhoneNumber(patientRequestDTO.getPhoneNumber());
+        patient.setAddress(patientRequestDTO.getAddress());
+        patient.setBirthDate(LocalDate.parse(patientRequestDTO.getBirthDate()));
+
+        Patient updatedPatient = patientRepository.save(patient);
+
+        return PatientMapper.toDTO(updatedPatient);
+    }
+}
