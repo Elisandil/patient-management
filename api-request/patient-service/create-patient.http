@@ -3,10 +3,10 @@ POST http://localhost:4000/patients
 Content-Type: application/json
 
 {
-  "name": "Pepe with Billing account",
+  "name": "Pepe with Billing account with Kafka",
   "surname": "",
-  "dni": "12345679A",
-  "email": "pepe3_billing@email.com",
+  "dni": "12345679B",
+  "email": "pepe3_billingKafka@email.com",
   "phoneNumber": "+34 958262214",
   "address": "C/ False 123, Munich",
   "birthDate": "1992-09-01",
